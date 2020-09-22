@@ -18,23 +18,16 @@
     >
       <!-- 一级分类 -->
       <el-form-item label="一级分类" prop="first_cateid">
-        <el-select v-model="ruleForm.first_cateid" placeholder="请选择">
-          <el-option label="顶级分类" :value="0"></el-option>
-          <el-option
-            :label="item.catename"
-            :value="item.id"
-            v-for="item in menuList"
-            :key="item.id"
-          ></el-option>
+        <el-select v-model="ruleForm.first_cateid" placeholder="请选择" @change="catetree">
+          <el-option :label="item.catename" :value="item.id" v-for="item in list" :key="item.id"></el-option>
         </el-select>
       </el-form-item>
 
       <!-- 二级分类 -->
       <el-form-item label="二级分类" prop="second_cateid">
         <el-select v-model="ruleForm.second_cateid" placeholder="请选择">
-          <el-option label="一级分类" :value="0"></el-option>
           <el-option
-            :label="item.second_cateid"
+            :label="item.catename"
             :value="item.id"
             v-for="item in menuList"
             :key="item.id"
@@ -62,27 +55,27 @@
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
           :auto-upload="false"
+          :on-change="change"
+          :file-list="imglist"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
 
       <el-form-item label="商品规格" prop="specsid">
-        <el-select v-model="ruleForm.specsid" placeholder="请选择">
-          <el-option label="一级分类" :value="0"></el-option>
-          <el-option :label="item.specsid" :value="item.id" v-for="item in menuList" :key="item.id"></el-option>
+        <el-select v-model="ruleForm.specsid" placeholder="请选择" @change="getAttr">
+          <el-option
+            :label="item.specsname"
+            :value="item.id"
+            v-for="item in goodslist"
+            :key="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="规格属性" prop="specsattr">
         <el-select v-model="ruleForm.specsattr" placeholder="请选择">
-          <el-option label="一级分类" :value="0"></el-option>
-          <el-option
-            :label="item.specsattr"
-            :value="item.id"
-            v-for="item in menuList"
-            :key="item.id"
-          ></el-option>
+          <el-option :label="item" :value="item" v-for="(item,index) in attrlist" :key="index"></el-option>
         </el-select>
       </el-form-item>
 
@@ -104,13 +97,12 @@
         <el-switch v-model="ruleForm.status"></el-switch>
       </el-form-item>
 
-      
-      <!-- 不知是否可行 -->
+      <!-- 不知是否可行
       <el-form-item label="商品描述" prop="description">
         <template>
-          <el-input id="editor" v-model="ruleForm.description"></el-input>
+          <div id="editor"></div>
         </template>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">{{buttonTitle}}</el-button>
@@ -123,10 +115,14 @@
 export default {
   data() {
     return {
-      menuList: [],
       id: "",
       title: "",
       buttonTitle: "",
+      list: [], //一级分类的值
+      menuList: [], //二级分类下拉框的值
+      goodslist: [], //商品规格下拉框的值
+      attrlist: [], //商品属性下拉框的值
+      imglist: [], //图片组件的属性 该属性将filelist绑定成动态的 为了能够回显
       // 调用接口文档的数据参数；
       ruleForm: {
         first_cateid: "",
@@ -145,14 +141,14 @@ export default {
 
       // 表单验证信息；
       rules: {
-        fid: [
-          { required: true, message: "请输入一级分类名称", trigger: "change" },
+        first_cateid: [
+          { required: true, message: "请输入一级分类名称", trigger: "blur" },
         ],
-        sid: [
-          { required: true, message: "请选择二级分类名称", trigger: "change" },
+        second_cateid: [
+          { required: true, message: "请选择二级分类名称", trigger: "blur" },
         ],
         goodsname: [
-          { required: true, message: "请选择商品名称", trigger: "change" },
+          { required: true, message: "请选择商品名称", trigger: "blur" },
         ],
       },
     };
@@ -160,30 +156,38 @@ export default {
 
   mounted() {
     //   同 echart 直接在生命周期中引入即可；
-    var E = require("wangeditor"); // 使用 npm 安装
-    // 创建编辑器
-    var editor = new E(".editor");
-    editor.create();
+    // var E = require("wangeditor"); // 使用 npm 安装
+    // // 创建编辑器
+    // var editor = new E(".editor");
+    // editor.create();
     // 回显
     this.id = this.$route.query.id;
     if (this.id) {
       this.title = "商品编辑";
       this.buttonTitle = "修改";
       this.$http.get("/goodsinfo", { id: this.id }).then((res) => {
-        let { status } = res.data.list;
-        this.ruleForm = {
-          ...res.data.list,
-          status: status == 1 ? true : false,
-        };
+        this.ruleForm = res.data.list;
+        (this.ruleForm.status = this.ruleForm.status == 1 ? true : false),
+          (this.imglist = [
+            {
+              name: res.data.list.catename,
+              url: "http://localhost:3000" + res.data.list.img,
+            },
+          ]);
       });
     } else {
       this.title = "商品添加";
       this.buttonTitle = "添加";
     }
 
-    this.$http.get("/goodslist").then((res) => {
+    this.$http.get("/getcatetree").then((res) => {
       console.log(res);
-      this.menuList = res.data.list;
+      this.list = res.data.list;
+    });
+
+    this.$http.get("/specslist").then((res) => {
+      console.log(res);
+      this.goodlist = res.data.list;
     });
   },
 
@@ -195,32 +199,60 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+    change(file, filelist) {
+      this.ruleForm.img = file.raw;
+    },
+    catetree() {
+      let cateid = this.ruleForm.first_cateid;
+      this.$http.get("/getcatetree").then((res) => {
+        this.menuList = res.data.list.filter((item) => {
+          return cateid == item.id;
+        })[0].children;
+      });
+    },
+    getAttr() {
+      let attrid = this.ruleForm.specsid;
+      this.$http.get("/specslist").then((res) => {
+        this.attrlist = res.data.list.filter((item) => {
+          return attrid == item.id;
+        })[0].attrs;
+      });
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.ruleForm.status = this.ruleForm.status ? 1 : 2;
+          let form = new FormData();
+          for (let key in (this.ruleForm)) {
+            form.append(key, this.ruleForm[key]);
+          }
           if (this.id) {
             console.log(this.id);
-
-            this.$http
-              .post("goodsedit", { ...this.ruleForm, id: this.id })
-              .then((res) => {
-                console.log(res);
-                if (res.data.code == 200) {
-                  this.$router.back();
-                }
-              });
+            form.append("id", this.id);
+            this.$http.post("/goodsedit", form).then((res) => {
+              console.log(res);
+              if (res.data.code == 200) {
+                this.$message({
+                  message: "修改成功",
+                  type: "success",
+                });
+                this.$router.back();
+              }
+            });
           } else {
             console.log(this.ruleForm);
             this.$http.post("/goodsadd", this.ruleForm).then((res) => {
               console.log(res);
               if (res.data.code == 200) {
+                this.$message({
+                  message: "添加成功",
+                  type: "success",
+                });
                 this.$router.back();
               }
             });
           }
-        }
-        // 验证不通过
+        } // 验证不通过
         else {
           console.log("error submit!!");
           return false;

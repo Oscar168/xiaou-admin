@@ -3,7 +3,7 @@
     <!-- 面包屑导航 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品列表</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/goods' }">商品列表</el-breadcrumb-item>
     </el-breadcrumb>
 
     <!-- 添加按钮 -->
@@ -20,6 +20,7 @@
     >
       <el-table-column prop="id" label="商品编号" width="180"></el-table-column>
       <el-table-column prop="goodsname" label="商品名称" width="180"></el-table-column>
+      <el-table-column prop="price" label="商品价格" width="180"></el-table-column>
       <el-table-column prop="market_price" label="市场价格" width="180"></el-table-column>
       <el-table-column label="图片" width="180">
         <template slot-scope="scope">
@@ -27,8 +28,18 @@
           <img :src="'http://localhost:3000'+scope.row.img" alt />
         </template>
       </el-table-column>
-      <el-table-column prop="isnew" label="是否新品" width="180"></el-table-column>
-      <el-table-column prop="ishot" label="是否热卖" width="180"></el-table-column>
+      <el-table-column label="是否新品" width="180">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isnew==1">{{scope.row.isnew|ishotFormat}}</el-tag>
+          <el-tag v-if="scope.row.isnew==2" type="danger">{{scope.row.isnew|ishotFormat}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否热卖" width="180">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.ishot==1">{{scope.row.ishot|ishotFormat}}</el-tag>
+          <el-tag v-if="scope.row.ishot==2" type="danger">{{scope.row.ishot|ishotFormat}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
           <el-tag>{{scope.row.status|statusFormat}}</el-tag>

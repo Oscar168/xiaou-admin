@@ -11,6 +11,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
 
+//引入字体图标文件
+import "./assets/font/iconfont"
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
