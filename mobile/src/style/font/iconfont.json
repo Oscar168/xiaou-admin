@@ -1,0 +1,86 @@
+{
+  "id": "2082518",
+  "name": "长沙xiaou",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "624530",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "689262",
+      "name": "类目 品类 分类 类别",
+      "font_class": "leimupinleifenleileibie",
+      "unicode": "e7f9",
+      "unicode_decimal": 59385
+    },
+    {
+      "icon_id": "830928",
+      "name": "联系我们",
+      "font_class": "lianxiwomen",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "953311",
+      "name": "返回",
+      "font_class": "fanhui",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "1026174",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "1629893",
+      "name": "闹钟",
+      "font_class": "icon-test",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "2019062",
+      "name": "商城",
+      "font_class": "shangcheng",
+      "unicode": "e7a8",
+      "unicode_decimal": 59304
+    },
+    {
+      "icon_id": "2675007",
+      "name": "我的",
+      "font_class": "wode",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "3217827",
+      "name": "放大镜",
+      "font_class": "icon-",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "5286709",
+      "name": "多选",
+      "font_class": "duoxuan",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "9809642",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    }
+  ]
+}
